@@ -1,24 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
+import useInterval from "./hooks/useInterval";
+import useWindowSize from "./hooks/useWindowSize";
 import "./snake.css";
 
+const getRandomFood = () => {
+  const x = Math.floor(Math.random() * 40);
+  const y = Math.floor(Math.random() * 40);
+  return { x, y };
+};
+
 const Snake = () => {
-  const useInterval = (callback, delay) => {
-    const savedCallback = useRef();
+  const { width, height } = useWindowSize();
+  console.log(width, height);
+  const [snake, setSnake] = useState([
+    { x: 10, y: 10 },
+    { x: 9, y: 10 },
+    { x: 8, y: 10 },
+  ]);
+  const [direction, setDirection] = useState("RIGHT");
+  const [food, setFood] = useState(getRandomFood());
+  const [speed, setSpeed] = useState(200);
+  const [score, setScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
 
-    useEffect(() => {
-      savedCallback.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
-      const tick = () => {
-        savedCallback.current();
-      };
-      if (delay !== null) {
-        const id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }
-    }, [delay]);
-  };
+  useEffect(() => {
+    //监听键盘事件
+    document.addEventListener("keydown", handleKeyDown, false);
+    return () => {
+      //销毁键盘事件
+      document.removeEventListener("keydown", handleKeyDown, false);
+    };
+  });
 
   const handleKeyDown = (event) => {
     switch (event.keyCode) {
@@ -39,25 +51,9 @@ const Snake = () => {
     }
   };
 
-  const getRandomFood = () => {
-    const x = Math.floor(Math.random() * 40);
-    const y = Math.floor(Math.random() * 40);
-    return { x, y };
-  };
-
-  const [snake, setSnake] = useState([
-    { x: 10, y: 10 },
-    { x: 9, y: 10 },
-    { x: 8, y: 10 }
-  ]);
-  const [direction, setDirection] = useState("RIGHT");
-  const [food, setFood] = useState(getRandomFood());
-  const [speed, setSpeed] = useState(200);
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-
   const moveSnake = () => {
     const head = { x: snake[0].x, y: snake[0].y };
+    console.log(head.x, head.y);
     switch (direction) {
       case "LEFT":
         head.x--;
@@ -86,9 +82,9 @@ const Snake = () => {
 
     if (
       head.x < 0 ||
-      head.x >= 40 ||
+      head.x >= width ||
       head.y < 0 ||
-      head.y >= 40 ||
+      head.y >= height ||
       newSnake.slice(1).some((cell) => cell.x === head.x && cell.y === head.y)
     ) {
       setGameOver(true);

@@ -98,12 +98,14 @@ const Snake = () => {
   return (
     <div className="snake-game">
       <div className="game-board">
+        {/* 显示分数 */}
+        <div className="score">Score: {score}</div>
         {/* 绘制蛇身 */}
         {snake.map((cell, index) => (
           <div
             key={index}
             className="snake-cell"
-            style={{ left: `${cell.x * 10}%`, top: `${cell.y * 10}%` }}
+            style={{ left: `${cell.x * 100}%`, top: `${cell.y * 100}%` }}
           ></div>
         ))}
         {/* 绘制食物 */}
@@ -112,8 +114,6 @@ const Snake = () => {
           style={{ left: `${food.x * 10}%`, top: `${food.y * 10}%` }}
         ></div>
       </div>
-      {/* 显示分数 */}
-      <div className="score">Score: {score}</div>
       {/* 显示游戏结束 */}
       {gameOver && <div className="game-over">Game Over</div>}
     </div>
